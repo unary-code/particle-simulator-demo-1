@@ -3,6 +3,47 @@ import Canvas from './Canvas.js'
 import {useState} from 'react'
 import UniformGrid from './UniformGrid.js'
 
+
+export const scaleBy = (v, factor) => {
+  let newV = Array.from(v);
+  for (let i=0; i<v.length; i++) {
+    newV[i] = (v[i] * factor);
+  }
+
+  return newV;
+}
+
+export const calcMag = (v) => {
+  let mag = 0;
+  for (let i=0; i<v.length; i++) {
+    mag += (v[i]*v[i]);
+  }
+
+  mag = Math.sqrt(mag);
+
+  return mag;
+}
+
+export const dotProduct = (v1, v2) => {
+  let prod = 0;
+
+  for (let i=0; i<v1.length; i++) {
+    prod += (v1[i]*v2[i])
+  }
+
+  return prod;
+}
+
+export const addVector = (v1, v2) => {
+  let v_sum = new Array(v1.length);
+
+  for (let i=0; i<v1.length; i++) {
+    v_sum[i] = v1[i] + v2[i];
+  }
+
+  return v_sum;
+}
+
 function App() {
   const CVS_WIDTH = 700;
   const CVS_HEIGHT = 700;
@@ -21,7 +62,7 @@ function App() {
   let posArr = [
     {x: 670, y:80, color: 'radfasdfadsf', vx: 35/100, vy: 3/100, radius: 20, mass: 10, done: false, id: 1},
     {       color: "#ff00ff", id: 2, mass: 10, radius: 20, vx: 0.06, vy: 0.07, x: 29, y: 106     },
-    {color: "#ff00ff",     id: 3,     mass: 10,     radius: 20,     vx: 0.028197216271269986,     vy: 0.024809665098591106,     x: 190.18657766011103,     y: 666.3230725576205},
+    {color: "#ff00ff",     id: 3,     mass: 10,     radius: 20,     vx: 0.028197216271269986,     vy: 0.024809665098591106,     x: 70,     y: 20},
     {       color: "#ff00ff", id: 4, mass: 10, radius: 20, vx: 0.04, vy: 0.08, x: 635, y: 538     }
   ]
 
@@ -105,46 +146,6 @@ function App() {
   // const drawParticles = (ctx, frameCount) => {
 
   // }
-
-  const scaleBy = (v, factor) => {
-    let newV = Array.from(v);
-    for (let i=0; i<v.length; i++) {
-      newV[i] = (v[i] * factor);
-    }
-
-    return newV;
-  }
-
-  const calcMag = (v) => {
-    let mag = 0;
-    for (let i=0; i<v.length; i++) {
-      mag += (v[i]*v[i]);
-    }
-
-    mag = Math.sqrt(mag);
-
-    return mag;
-  }
-
-  const dotProduct = (v1, v2) => {
-    let prod = 0;
-
-    for (let i=0; i<v1.length; i++) {
-      prod += (v1[i]*v2[i])
-    }
-
-    return prod;
-  }
-
-  const addVector = (v1, v2) => {
-    let v_sum = new Array(v1.length);
-
-    for (let i=0; i<v1.length; i++) {
-      v_sum[i] = v1[i] + v2[i];
-    }
-
-    return v_sum;
-  }
 
   const handleCollisionWithObject = (i1, i2) => {
     //To represent vectors, use arrays not properties of x and y
@@ -483,8 +484,8 @@ function App() {
     posArr = posArrCopy;
     // setPosArr(posArrCopy);
 
-    handleCollisions(posArr);
-    ug.handleCollisions();
+    //handleCollisions(posArr);
+    //ug.handleCollisions();
   }
 
   const updateFrame = () => {

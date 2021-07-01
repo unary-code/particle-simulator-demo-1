@@ -1,5 +1,6 @@
 import React from 'react'
 import Unit from './Unit'
+import {calcMag, dotProduct, scaleBy, addVector} from './App'
 
 export default class UniformGrid {
     constructor(posArr, CVS_WIDTH, CVS_HEIGHT) {
@@ -16,8 +17,9 @@ export default class UniformGrid {
     initializeCells(posArrTest) {
 
         for (let ind=0; ind<posArrTest.length; ind++) {
-            const curPos = [posArrTest[ind].y, posArrTest[ind].x]
-            const curUnit = new Unit(this, curPos[1], curPos[0])
+            const curPos = posArrTest[ind]
+            const curUnit = new Unit(this, ind, curPos)
+            this.add(curUnit);
 
             /*
             const curCellInds = new Array(2)
@@ -32,8 +34,8 @@ export default class UniformGrid {
 
     makeArray(d1, d2) {
         var arr = [];
-        for(let i = 0; i < d2; i++) {
-            arr.push(new Array(d1));
+        for(let i = 0; i < d1; i++) {
+            arr.push(new Array(d2));
             arr[i] = arr[i].fill(null);
         }
         return arr;
@@ -48,8 +50,8 @@ export default class UniformGrid {
         
         // Determine which grid cell it's in.
         console.log("unit=" + unit.toString())
-        const cellX = Math.floor(unit.x * this.NUM_CELLS / this.CVS_DIMENSIONS[1]);
-        const cellY = Math.floor(unit.y * this.NUM_CELLS / this.CVS_DIMENSIONS[0]);
+        const cellX = Math.floor(unit.pos.x * this.NUM_CELLS / this.CVS_DIMENSIONS[1]);
+        const cellY = Math.floor(unit.pos.y * this.NUM_CELLS / this.CVS_DIMENSIONS[0]);
 
         // Add to the front of list for the cell it's in.
         unit.prev = null;
@@ -64,13 +66,94 @@ export default class UniformGrid {
         }
     }
 
-    calcDist(unit, other) {
-        const dist = Math.sqrt((unit.x-other.x)*(unit.x-other.x) + (unit.y-other.y)*(unit.y-other.y));
+    calcDist(pos1, pos2) {
+        const dist = Math.sqrt((pos1.x-pos2.x)*(pos1.x-pos2.x) + (pos1.y-pos2.y)*(pos1.y-pos2.y));
         return dist;
     }
 
-    handleCollisionWithObject(unit, other) {
-        console.log("IN UniformGrid.js, handleCollisionWithObject(unit=" + unit + ", other=" + other + ");");
+    handleCollisionWithObject(pos1, pos2) {
+        console.log("IN UniformGrid.js, handleCollisionWithObject(pos1=" + pos1 + ", pos2=" + pos2 + ");");
+        //To represent vectors, use arrays not properties of x and y
+    
+    const m = [pos1.mass, pos2.mass]
+
+    //p_diff = position vector to get from center of object 1 to center of object 2
+    const p_diff = [pos2.x-pos1.x, pos2.y-pos1.y]
+
+    //v_bef = array of velocity vectors for initial velocities of object 1 and object 2
+    const v_bef = [[pos1.vx, pos1.vy], [pos2.vx, pos2.vy]]
+
+    const u_norm = scaleBy(p_diff, 1/(calcMag(p_diff)));
+    const u_tan = [-u_norm[1], u_norm[0]]
+
+    //v_bef_rot = transformed version of v_bef. this time v_bef_rot[i][0] reps the normal component and v_bef_rot[i][1] reps the tangent component
+    const v_bef_rot = [[dotProduct(v_bef[0], u_norm), dotProduct(v_bef[0], u_tan)], [dotProduct(v_bef[1], u_norm), dotProduct(v_bef[1], u_tan)]]
+  
+    let v_aft_rot = [[0,v_bef_rot[0][1]],[0,v_bef_rot[1][1]]]
+
+    //fill in the normal components for the 2 object's final velocities
+    v_aft_rot[0][0] = (v_bef_rot[0][0])*(m[0]-m[1]) + 2*m[1]*(v_bef_rot[1][0])
+    v_aft_rot[1][0] = (v_bef_rot[1][0])*(m[1]-m[0]) + 2*m[0]*(v_bef_rot[0][0])
+
+    v_aft_rot[0][0] = v_aft_rot[0][0] * 1/(m[0]+m[1])
+    v_aft_rot[1][0] = v_aft_rot[1][0] * 1/(m[0]+m[1])
+
+    let v_aft = [[0,0],[0,0]]
+    for (let i=0; i<v_aft.length; i++) {
+      v_aft[i] = addVector(v_aft[i], scaleBy(u_norm, v_aft_rot[i][0]))
+      v_aft[i] = addVector(v_aft[i], scaleBy(u_tan, v_aft_rot[i][1]))
+    }
+
+    /*
+    console.log("p_diff" + p_diff);
+    console.log("v_bef" + v_bef);
+    console.log("u_norm" + u_norm);
+    console.log("u_tan" + u_tan);
+    console.log("v_bef_rot" + v_bef_rot);
+    console.log("v_aft_rot" + v_aft_rot);
+    console.log("v_aft" + v_aft);
+    */
+
+    return v_aft;
+        /*
+    const m = [unit.mass, other.mass]
+
+    //p_diff = position vector to get from center of object 1 to center of object 2
+    const p_diff = [other.x-unit.x, other.y-unit.y]
+
+    //v_bef = array of velocity vectors for initial velocities of object 1 and object 2
+    const v_bef = [[unit.vx, unit.vy], [other.vx, other.vy]]
+
+    const u_norm = scaleBy(p_diff, 1/(calcMag(p_diff)));
+    const u_tan = [-u_norm[1], u_norm[0]]
+
+    //v_bef_rot = transformed version of v_bef. this time v_bef_rot[i][0] reps the normal component and v_bef_rot[i][1] reps the tangent component
+    const v_bef_rot = [[dotProduct(v_bef[0], u_norm), dotProduct(v_bef[0], u_tan)], [dotProduct(v_bef[1], u_norm), dotProduct(v_bef[1], u_tan)]]
+  
+    let v_aft_rot = [[0,v_bef_rot[0][1]],[0,v_bef_rot[1][1]]]
+
+    //fill in the normal components for the 2 object's final velocities
+    v_aft_rot[0][0] = (v_bef_rot[0][0])*(m[0]-m[1]) + 2*m[1]*(v_bef_rot[1][0])
+    v_aft_rot[1][0] = (v_bef_rot[1][0])*(m[1]-m[0]) + 2*m[0]*(v_bef_rot[0][0])
+
+    v_aft_rot[0][0] = v_aft_rot[0][0] * 1/(m[0]+m[1])
+    v_aft_rot[1][0] = v_aft_rot[1][0] * 1/(m[0]+m[1])
+
+    let v_aft = [[0,0],[0,0]]
+    for (let i=0; i<v_aft.length; i++) {
+      v_aft[i] = addVector(v_aft[i], scaleBy(u_norm, v_aft_rot[i][0]))
+      v_aft[i] = addVector(v_aft[i], scaleBy(u_tan, v_aft_rot[i][1]))
+    }
+
+    v_aft = [[0, 0], [0, 0]]
+
+    unit.vx = v_aft[0][0];
+    unit.vy = v_aft[0][1];
+    other.vx = v_aft[1][0];
+    other.vy = v_aft[1][1];
+    return v_aft;
+    */
+
     }
 
     handleCell(unit) {
@@ -80,9 +163,11 @@ export default class UniformGrid {
           while (other != null)
           {
             
-            if (this.calcDist(unit, other) < 100)
+            const curDist = this.calcDist(unit.pos, other.pos);
+            console.log("curDist=" + curDist + " btwn unit and other where unit=" + unit + ", other=" + other);
+            if (curDist < 40)
             {
-              this.handleCollisionWithObject(unit, other);
+              this.handleCollisionWithObject(unit.pos, other.pos);
             }
             other = other.next;
           }
@@ -95,6 +180,9 @@ export default class UniformGrid {
         //Handle 1 frame is the following runtime
         //curUnits = # of Units in Cell[i][j]
         //O(NUM_CELLS*NUM_CELLS*(curUnits across all i,j)^2)
+
+        console.log("INSIDE UniformGrid handleCollisions() run");
+
         for (let x = 0; x < this.NUM_CELLS; x++) {
             for (let y = 0; y < this.NUM_CELLS; y++) {
                 this.handleCell(this.cells[x][y]);

@@ -7,30 +7,37 @@ const useCanvas = (props) => {
     const draw = props.draw;
     const updateDraw = props.updateDraw;
 
-    const [clickMode, setClickMode] = useState(false);
-    //let clickMode = false;
+    //const [clickMode, setClickMode] = useState(false);
+    let clickMode = useRef(false);
     const [restart, setRestart] = useState(false);
 
     let frameCount = 0
-    const [fc, setFc] = useState(frameCount)
+    
+    let fc = useRef(0)
 
     const clickFunction = () => {
       console.log("clickFunction() run");
-      console.log("clickMode before=", clickMode);
-      setClickMode(!clickMode, () => { console.log("clickMode after=", clickMode);});
-    
-
+      console.log("clickMode before=", clickMode.current);
+      //setClickMode(!clickMode, () => { console.log("clickMode after=", clickMode);});
+      clickMode.current = !clickMode.current;
+      console.log("clickMode after=", clickMode.current);
+      if (!clickMode.current) {
+        console.log("restart is changed thru setRestart");
+        setRestart(!restart);
+      }
     }
 
     useEffect(() => {
       console.log("clickMode after in useEffect=", clickMode);
       console.log("restart before in useEffect= ", restart);
-      if (!clickMode) {
+      /*
+      if (!clickMode.current) {
         console.log("restart is changed thru setRestart");
         setRestart(!restart);
       }
+      */
       console.log("restart after = ", restart);
-    }, [clickMode]);
+    }, [clickMode.current]);
 
     /*
     useEffect(() => {
@@ -58,20 +65,24 @@ const useCanvas = (props) => {
       console.log("clickMode=", clickMode);
       console.log("restart=", restart);
 
+      fc.current++;
       frameCount++;
+
       //setFc(fc+1);
-      draw(context, frameCount)
-      updateDraw(frameCount)
+      draw(context, fc)
+      updateDraw(fc)
       //animationFrameId = window.requestAnimationFrame(render);
       
       //setTimeout(() => {console.log("setTimeout LOG");}, 10000);
       //animationFrameId = window.requestAnimationFrame(render);
 
       //console.log("key=" + props.key + " clickMode=" + props.clickMode);
-      if (clickMode) {
+      if (clickMode.current) {
         console.log("useCanvas render method RETURN");
-        setFc(frameCount);
+        //fc.current = frameCount;
+        //setFc(frameCount);
         console.log("fc after setFc=", fc);
+        window.cancelAnimationFrame(animationFrameId);
         return;
         //setTimeout(render, 1000);
       } else {
