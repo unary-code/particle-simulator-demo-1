@@ -17,8 +17,8 @@ const useCanvas = (props) => {
     const clickFunction = () => {
       console.log("clickFunction() run");
       console.log("clickMode before=", clickMode);
-      setClickMode(!clickMode);
-      console.log("clickMode after=", clickMode);
+      setClickMode(!clickMode, () => { console.log("clickMode after=", clickMode);});
+    
 
     }
 
@@ -30,7 +30,7 @@ const useCanvas = (props) => {
         setRestart(!restart);
       }
       console.log("restart after = ", restart);
-    }, clickMode);
+    }, [clickMode]);
 
     /*
     useEffect(() => {
@@ -43,9 +43,9 @@ const useCanvas = (props) => {
 
   const canvasRef = useRef(null)
 
-  /*
+  
   useEffect(() => {
-    clickMode = false;
+    
     const canvas = canvasRef.current
     const context = canvas.getContext('2d')
     //let frameCount = 0
@@ -55,6 +55,8 @@ const useCanvas = (props) => {
     const render = () => {
       console.log("INSIDE render()");
       console.log("frameCount=", frameCount);
+      console.log("clickMode=", clickMode);
+      console.log("restart=", restart);
 
       frameCount++;
       //setFc(fc+1);
@@ -83,8 +85,8 @@ const useCanvas = (props) => {
     return () => {
       window.cancelAnimationFrame(animationFrameId)
     }
-  }, [draw, updateDraw, clickMode])
-  */
+  }, [draw, updateDraw, restart])
+  
 
   /*
   useEffect(() => {
