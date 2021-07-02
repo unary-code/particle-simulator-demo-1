@@ -11,8 +11,12 @@ export default class UniformGrid {
         this.initializeCells(posArr);
         this.done = false;
         this.testFc = 0;
-        this.maxFc = 32;
+        this.maxFc = 100;
+        //this.maxFc = 870;
+        //this.maxFc = 28;
+        //this.maxFc = 32;
         
+        this.nRUC = 0;
     }
 
     //Initialize the cells array with points from posArrTest
@@ -54,7 +58,9 @@ export default class UniformGrid {
 
     addPos(pos, posInd) {
         //unit is type Unit
-        
+        if (this.nRUC >= 1) {
+            //return;
+        }
         // Determine which grid cell it's in.
         console.log("pos=", pos)
 
@@ -62,20 +68,30 @@ export default class UniformGrid {
         const cellY = Math.floor(pos.y * this.NUM_CELLS / this.CVS_DIMENSIONS[0]);
 
         // Add to the front of list for the cell it's in.
-        pos.prev = null;
-        console.log("cellX=" + cellX + " cellY=" + cellY);
+        this.posArr[posInd].prev = null;
+        console.log("posInd=" + posInd + " cellX=" + cellX + " cellY=" + cellY);
         if (cellY < 0) {
             this.testFc = this.maxFc + 1;
             return;
         }
-        pos.next = this.cells[cellY][cellX];
+        console.log("BEFORE this.posArr[posInd].next is set, this.cells[cellY][cellX]=", this.cells[cellY][cellX])
+        this.posArr[posInd].next = this.cells[cellY][cellX];
         
         this.cells[cellY][cellX] = posInd;
 
-        if (pos.next != null)
+        if (this.posArr[posInd].next != null)
         {
-            this.posArr[pos.next].prev = posInd;
+            console.log("the prev of posInd's next is updated")
+            this.posArr[this.posArr[posInd].next].prev = posInd;
         }
+
+        /*
+        if (this.nRUC < 1) {
+            //this.posArr[0].next = 1;
+            this.printGrid();
+            console.log("after print grid in addPos()");
+        }
+        */
     }
 
     add(unit) {
@@ -102,34 +118,64 @@ export default class UniformGrid {
     updateCells(curInd, curI, curJ, newI, newJ) {
         //curInd is the ind in this.posArr of the current particle
         //Assume this.posArr[curInd] falls physically in the cell boundaries of newI, newJ (Assume this.posArr[curInd] has already been updated)
+        
+        if (curInd == 1) {
+            //    return;
+        }
 
         console.log("updateCells(curInd=" + curInd + ", curI=" + curI + ", curJ=" + curJ + ", newI=" + newI + " newJ="+ newJ + ")");
+        console.log("this.posArr[curInd]=", this.posArr[curInd]);
+        console.log("this.posArr[curInd].prev=", this.posArr[curInd].prev);
+        console.log("this.posArr[curInd].next=", this.posArr[curInd].next);
 
         //Update cell[curI][curJ]'s list
 
-        if (this.posArr[curInd].prev != null) {
+        if (this.posArr[curInd].prev !== null) {
+            console.log("testing prev !=null");
             this.posArr[this.posArr[curInd].prev].next = this.posArr[curInd].next;
         }
 
-        if (this.posArr[curInd].next != null) {
+        if (this.posArr[curInd].next !== null) {
+            console.log("testing next !=null");
             this.posArr[this.posArr[curInd].next].prev = this.posArr[curInd].prev;
         }
 
         if (this.cells[curI][curJ] === curInd) {
             //Another way to write the if statement is this.posArr[curInd].prev == null
-            this.cells[curI][curJ] = this.posArr[curInd].next;
+            //this.cells[curI][curJ] = this.posArr[curInd].next;
+            if (this.cells[curI][curJ].next == null || this.cells[curI][curJ].next == undefined) {
+                this.cells[curI][curJ] = null;
+            } else {
+                this.cells[curI][curJ] = this.cells[curI][curJ].next;
+            }
+            console.log("CHANGE curInd=" + curInd + " cells[curI=" + curI + "][curJ=" + curJ + "] cells[curI][curJ].next=" + this.cells[curI][curJ]);
         }
 
         //Update cell[newI][newJ]'s list
 
+        console.log("this.posArr[curInd]=", this.posArr[curInd]);
         this.addPos(this.posArr[curInd], curInd);
 
-        //this.printGrid();
+        /*
+        if (this.nRUC < 1) {
+        this.printGrid();
+        }
+        */
+
+        this.printGrid();
+        this.nRUC++;
     }
 
     updateDraw(timeRate) {
 
-        if (this.testFc > this.maxFc) return this.posArr;
+        if (this.testFc > this.maxFc) {
+            console.log("updateDraw() returned since this.testFc was > than " + this.maxFc);
+            if (this.testFc < this.maxFc + 2) {
+                this.printGrid();
+            }
+            this.testFc++;
+            return this.posArr;
+        }
 
         this.handleCollisions();
 
@@ -137,23 +183,37 @@ export default class UniformGrid {
             for (let j=0; j<this.NUM_CELLS; j++) {
                 let curInd = this.cells[i][j];
                 if (curInd === null) continue;
+                console.log("i,j = " + i + "," + j + " curInd=" + curInd);
+                const curUnitCopy = this.posArr[curInd];
                 let curUnit = this.posArr[curInd];
-                const curI = i, curJ = j;
+                const curI = i;
+                const curJ = j;
                 while (curInd != null) {
+                    const tempUnit = {...curUnit};
+                    /*
+                    console.log("INSIDE updateDraw() INSIDE while (curInd != null) loop");
+                    console.log("BEFORE UPDATE curUnit.x, curUnit.y");
+                    console.log("curInd=", curInd);
+                    console.log("curUnit=" + curUnit + " curUnit.x=", curUnit.x + "curUnit.y=" + curUnit.y + " curUnit.vx=" + curUnit.vx + " curUnit.vy=" + curUnit.vy);
+                    */
                     curUnit.x += timeRate*curUnit.vx;
                     curUnit.y += timeRate*curUnit.vy;
-                    const curDir = isCollisionWithWall(curUnit);
-                    console.log("INSIDE updateDraw() INSIDE while (curInd != null) loop");
+                    
+                    console.log("AFTER UPDATE curUnit.x, curUnit.y");
                     console.log("curInd=", curInd);
-                    console.log("curDir=" + curDir + " curDir.pos1.x=", curDir.pos1.x);
+                    console.log("curUnit=" + curUnit + " curUnit.x=", curUnit.x + "curUnit.y=" + curUnit.y + " curUnit.vx=" + curUnit.vx + " curUnit.vy=" + curUnit.vy);
+                    console.log("curI=" + curI + " curJ=" + curJ);
+                    
+                    const curDir = isCollisionWithWall(curUnit);
+                    //console.log("curDir=" + curDir + " curDir.pos1.x=", curDir.pos1.x);
                     if (curDir.foundCollision) {
-                        console.log("Before linIntWithWall");
-                        console.log("unit pos=", curUnit);
+                        //console.log("Before linIntWithWall");
+                        //console.log("unit pos=", curUnit);
                         linearInterpolateWithWall(curUnit);
-                        console.log("After linIntWithWall");
-                        console.log("unit pos=", curUnit);
+                        //console.log("After linIntWithWall");
+                        //console.log("unit pos=", curUnit);
 
-                        //handleCollisionWithWall(curUnit, curDir.dir);
+                        handleCollisionWithWall(curUnit, curDir.dir);
                     }
 
                     const newI = Math.floor(curUnit.y * this.NUM_CELLS / this.CVS_DIMENSIONS[0]);
@@ -161,8 +221,9 @@ export default class UniformGrid {
                     if (newI != curI || newJ != curJ) {
                         this.updateCells(curInd, curI, curJ, newI, newJ)
                     }
-
-                    curInd = curUnit.next;
+                    
+                   
+                    curInd = tempUnit.next;
                     if (curInd == null) break;
                     curUnit = this.posArr[curInd];
                 }
@@ -285,22 +346,24 @@ export default class UniformGrid {
         {
           
           const curDist = this.calcDist(this.posArr[unit], this.posArr[other]);
-          console.log("curDist=" + curDist + " btwn unit and other where other=" + this.posArr[other]);
+          //console.log("curDist=" + curDist + " btwn unit and other where other=" + this.posArr[other]);
           
           if (curDist < this.posArr[unit].radius+this.posArr[other].radius)
           {
-            console.log("IN UniformGrid.js, handleCollisionWithObject(pos1=" + unit + ", pos2=" + other + ");");
+            //console.log("IN UniformGrid.js, handleCollisionWithObject(pos1=" + unit + ", pos2=" + other + ");");
             //unit.pos.vx = 0;
-            console.log("unit and other before linearInterpolate");
-            console.log("unit pos=", this.posArr[unit]);
-            console.log("other pos=", this.posArr[other]);
+            //console.log("unit and other before linearInterpolate");
+            //console.log("unit pos=", this.posArr[unit]);
+            //console.log("other pos=", this.posArr[other]);
 
             linearInterpolate(this.posArr[unit], this.posArr[other]);
-
+            
+            /*
             console.log("unit and other after linearInterpolate");
             console.log("unit pos=", this.posArr[unit]);
             console.log("other pos=", this.posArr[other]);
             console.log("curDist btwn new updated pos of unit and other= calcDist = ", this.calcDist(this.posArr[unit], this.posArr[other]));
+            */
 
             const v_aft = this.handleCollisionWithObject(this.posArr[unit], this.posArr[other]);
             console.log("v_aft = ", v_aft);
@@ -346,7 +409,7 @@ export default class UniformGrid {
             */
 
             let other = this.posArr[unit].next;
-            console.log("cell[" + i + "][" + j + "], unit=" + unit);
+            //console.log("cell[" + i + "][" + j + "], unit=" + unit);
             this.handleCellInteraction(unit, other);
         
             if (i > 0 && j > 0) this.handleCellInteraction(unit, this.cells[i - 1][j - 1]);
@@ -368,15 +431,15 @@ export default class UniformGrid {
 
         //if (this.done) return;
 
-        if (this.testFc > this.maxFc) return;
+        //if (this.testFc > this.maxFc) return;
 
-        console.log("INSIDE UniformGrid handleCollisions() run");
+        //console.log("INSIDE UniformGrid handleCollisions() run");
         
         for (let x = 0; x < this.NUM_CELLS; x++) {
             for (let y = 0; y < this.NUM_CELLS; y++) {
                 if (this.cells[x][y] === null) continue;
-                console.log("x,y=" + x + "," + y);
-                console.log("unit.pos=", this.posArr[this.cells[x][y]])
+                //console.log("x,y=" + x + "," + y);
+                //console.log("unit.pos=", this.posArr[this.cells[x][y]])
                 this.handleCell(x, y);
             }
         }
@@ -384,7 +447,7 @@ export default class UniformGrid {
     }
 
     printGrid() {
-        
+        console.log("PRINTGRID()");
         for (let i=0; i<this.cells.length; i++) {
             for (let j=0; j<this.cells[i].length; j++) {
                 if (this.cells[i][j] == null) continue;

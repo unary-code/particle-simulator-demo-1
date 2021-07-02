@@ -264,11 +264,36 @@ function App() {
 
   //let posArr = [{x: 30, y:80, color: 'radfasdfadsf', vx: 5, vy: 3, radius: 20, mass: 10, done: false}, {x: 150, y: 100, vx: -1, vy: .5, radius: 20, mass: 10, done: false}]
 
+  /*
   let posArr = [
     {x: 670, y:80, color: 'radfasdfadsf', vx: -1, vy: 0.5, radius: 70, mass: 10, done: false, id: 1},
     {       color: "#ff00ff", id: 2, mass: 10, radius: 30, vx: 0.05, vy: -0.05, x: 79, y: 116     },
     {color: "#ff00ff",     id: 3,     mass: 10,     radius: 30,     vx: 0.5,     vy: 0.5,     x: 70,     y: 20},
     {       color: "#ff00ff", id: 4, mass: 10, radius: 70, vx: -0.05, vy: -0.1, x: 635, y: 538     }
+  ]
+  */
+
+  /*
+  let posArr = [
+    {x: 600, y:80, color: 'radfasdfadsf', vx: 0, vy: 0.1, radius: 70, mass: 10, done: false, id: 1},
+    {       color: "#ff00ff", id: 2, mass: 10, radius: 30, vx: 0.025, vy: -0.025, x: 79, y: 116     },
+    {color: "#ff00ff",     id: 3,     mass: 10,     radius: 30,     vx: 0.025,     vy: 0.05,     x: 90,     y: 31},
+    {       color: "#ff00ff", id: 4, mass: 10, radius: 70, vx: 0, vy: 0, x: 600, y: 538     }
+  ]
+  */
+
+  /*
+  let posArr = [
+    {x: 600, y: 150, color: 'radfasdfadsf', vx: 0, vy: 0.1, radius: 70, mass: 10, done: false, id: 1},
+    {       color: "#ff00ff", id: 2, mass: 10, radius: 30, vx: 0, vy: 0, x: 79, y: 116     },
+    {color: "#ff00ff",     id: 3,     mass: 10,     radius: 30,     vx: 0.7702,     vy: 0.449608,     x: 415.080165,     y: 196.355},
+    {       color: "#ff00ff", id: 4, mass: 10, radius: 70, vx: 0, vy: 0, x: 600, y: 538     }
+  ]
+*/
+
+  let posArr = [
+    {color: "#ff00ff",     id: 2,     mass: 10,     radius: 30,     vx: 1.5404/2,     vy: -0.899216/2,     x: 464.393,     y: 367.652},
+    {x: 600, y: 322.599, color: 'radfasdfadsf', vx: 0, vy: 0.1, radius: 70, mass: 10, done: false, id: 1}
   ]
 
   const generatePos = (N) => {
@@ -530,7 +555,7 @@ function App() {
 
   const setup = () => {
   generatePos(0);
-  speedUp(20);
+  speedUp(2);
   console.log("after generatePos, posArr=", posArr);
   ug = new UniformGrid(posArr, CVS_WIDTH, CVS_HEIGHT, NUM_CELLS);
 
