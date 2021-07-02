@@ -11,7 +11,7 @@ export default class UniformGrid {
         this.initializeCells(posArr);
         this.done = false;
         this.testFc = 0;
-        this.maxFc = 100;
+        this.maxFc = 10000;
         //this.maxFc = 870;
         //this.maxFc = 28;
         //this.maxFc = 32;
@@ -124,18 +124,18 @@ export default class UniformGrid {
         }
 
         console.log("updateCells(curInd=" + curInd + ", curI=" + curI + ", curJ=" + curJ + ", newI=" + newI + " newJ="+ newJ + ")");
-        console.log("this.posArr[curInd]=", this.posArr[curInd]);
-        console.log("this.posArr[curInd].prev=", this.posArr[curInd].prev);
-        console.log("this.posArr[curInd].next=", this.posArr[curInd].next);
+        console.log("this.posArr[curInd]=", JSON.parse(JSON.stringify(this.posArr[curInd])));
+        //console.log("this.posArr[curInd].prev=", this.posArr[curInd].prev);
+        //console.log("this.posArr[curInd].next=", this.posArr[curInd].next);
 
         //Update cell[curI][curJ]'s list
 
-        if (this.posArr[curInd].prev !== null) {
+        if (!(this.posArr[curInd].prev == null)) {
             console.log("testing prev !=null");
             this.posArr[this.posArr[curInd].prev].next = this.posArr[curInd].next;
         }
 
-        if (this.posArr[curInd].next !== null) {
+        if (!(this.posArr[curInd].next == null)) {
             console.log("testing next !=null");
             this.posArr[this.posArr[curInd].next].prev = this.posArr[curInd].prev;
         }
@@ -143,11 +143,9 @@ export default class UniformGrid {
         if (this.cells[curI][curJ] === curInd) {
             //Another way to write the if statement is this.posArr[curInd].prev == null
             //this.cells[curI][curJ] = this.posArr[curInd].next;
-            if (this.cells[curI][curJ].next == null || this.cells[curI][curJ].next == undefined) {
-                this.cells[curI][curJ] = null;
-            } else {
-                this.cells[curI][curJ] = this.cells[curI][curJ].next;
-            }
+            
+                this.cells[curI][curJ] = this.posArr[this.cells[curI][curJ]].next;
+            
             console.log("CHANGE curInd=" + curInd + " cells[curI=" + curI + "][curJ=" + curJ + "] cells[curI][curJ].next=" + this.cells[curI][curJ]);
         }
 
@@ -458,7 +456,7 @@ export default class UniformGrid {
                     console.log(curEle);
                 } else {
                     while (true) {
-                    console.log(curEle);
+                    console.log(JSON.parse(JSON.stringify(curEle)));
                     if (curEle.next == null) break;
                     if (curEle.posInd == curEle.next) break;
                     curEle = this.posArr[curEle.next];
