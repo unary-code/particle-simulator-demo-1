@@ -49,7 +49,6 @@ const useCanvas = (props) => {
     //const clickFlag = props.clickFlag;
 
   const canvasRef = useRef(null)
-
   
   useEffect(() => {
     
@@ -60,17 +59,19 @@ const useCanvas = (props) => {
     let animationFrameId
     
     const render = () => {
+      /*
       console.log("INSIDE render()");
       console.log("frameCount=", frameCount);
       console.log("clickMode=", clickMode);
       console.log("restart=", restart);
-
+      */
+     
       fc.current++;
       frameCount++;
 
       //setFc(fc+1);
       draw(context, fc)
-      updateDraw(fc)
+      updateDraw(fc, 1)
       //animationFrameId = window.requestAnimationFrame(render);
       
       //setTimeout(() => {console.log("setTimeout LOG");}, 10000);
