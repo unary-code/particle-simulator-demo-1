@@ -253,7 +253,7 @@ function App() {
 
   const BALL_RADIUS = 40;
 
-  const NUM_CELLS = 3;
+  const NUM_CELLS = 2;
 
   let ug;
 
@@ -273,14 +273,18 @@ function App() {
   ]
   */
 
-  /*
+  
   let posArr = [
-    {x: 600, y:80, color: 'radfasdfadsf', vx: 0, vy: 0.1, radius: 70, mass: 10, done: false, id: 1},
-    {       color: "#ff00ff", id: 2, mass: 10, radius: 30, vx: 0.025, vy: -0.025, x: 79, y: 116     },
+    {x: 600, y:80, color: 'radfasdfadsf', vx: 0, vy: 0.1, radius: 10, mass: 10, done: false, id: 1},
+    {       color: "#ff00ff", id: 2, mass: 10, radius: 10, vx: 0.025, vy: -0.025, x: 79, y: 116     },
     {color: "#ff00ff",     id: 3,     mass: 10,     radius: 30,     vx: 0.025,     vy: 0.05,     x: 90,     y: 31},
-    {       color: "#ff00ff", id: 4, mass: 10, radius: 70, vx: 0, vy: 0, x: 600, y: 538     }
+    {       color: "#ff00ff", id: 4, mass: 10, radius: 10, vx: 0, vy: 0, x: 600, y: 538     },
+    {       color: "#ff00ff", id: 5, mass: 10, radius: 20, vx: 0, vy: 0, x: 300, y: 500     },
+    {       color: "#ff00ff", id: 6, mass: 10, radius: 30, vx: -0.1, vy: -0.2, x: 100, y: 610     },
+    {       color: "#ff00ff", id: 7, mass: 10, radius: 30, vx: -0.2, vy: 0.05, x: 40, y: 250     }
+
   ]
-  */
+
 
   /*
   let posArr = [
@@ -291,11 +295,12 @@ function App() {
   ]
 */
 
-
+/*
   let posArr = [
     {color: "#ff00ff",     id: 2,     mass: 10,     radius: 30,     vx: 1.5404/2,     vy: -0.899216/2,     x: 464.393,     y: 367.652},
     {x: 600, y: 322.599, color: 'radfasdfadsf', vx: 0, vy: 0.1, radius: 70, mass: 10, done: false, id: 1}
   ]
+*/
 
   const generatePos = (N) => {
 
@@ -556,7 +561,7 @@ function App() {
 
   const setup = () => {
   generatePos(0);
-  speedUp(2);
+  speedUp(20);
   console.log("after generatePos, posArr=", posArr);
   ug = new UniformGrid(posArr, CVS_WIDTH, CVS_HEIGHT, NUM_CELLS);
 
