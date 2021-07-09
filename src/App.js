@@ -1,7 +1,8 @@
 import './App.css';
 import Canvas from './Canvas.js'
-import {useState} from 'react'
+import {useState, useRef} from 'react'
 import UniformGrid from './UniformGrid.js'
+import DisplayGrid from './DisplayGrid.js'
 
 export const CVS_WIDTH = 700;
 export const CVS_HEIGHT = 700;
@@ -257,6 +258,9 @@ function App() {
 
   let ug;
 
+  //let testV = useRef({a1: 3, a2: 5})
+  //state = {test: '111'}
+
   // ctx.beginPath();
   // ctx.moveTo(0, 0);
   // ctx.lineTo(300, 150);
@@ -273,7 +277,7 @@ function App() {
   ]
   */
 
-  
+  /*
   let posArr = [
     {x: 600, y:80, color: 'radfasdfadsf', vx: 0, vy: 0.1, radius: 10, mass: 10, done: false, id: 1},
     {       color: "#ff00ff", id: 2, mass: 10, radius: 10, vx: 0.025, vy: -0.025, x: 79, y: 116     },
@@ -284,6 +288,15 @@ function App() {
     {       color: "#ff00ff", id: 7, mass: 10, radius: 30, vx: -0.2, vy: 0.05, x: 40, y: 250     }
 
   ]
+*/
+
+let posArr = [
+  {x: 600, y:80, color: 'radfasdfadsf', vx: 0, vy: 0.1, radius: 10, mass: 10, done: false, id: 1},
+  {       color: "#ff00ff", id: 2, mass: 10, radius: 10, vx: 0, vy: 0, x: 600, y: 538     },
+  {       color: "#ff00ff", id: 3, mass: 10, radius: 30, vx: -0.1, vy: -0.2, x: 100, y: 385     },
+  {       color: "#ff00ff", id: 4, mass: 10, radius: 30, vx: -0.2, vy: 0.05, x: 40, y: 35     }
+
+]
 
 
   /*
@@ -313,7 +326,7 @@ function App() {
   }
 
   const speedUp = (factor) => {
-    posArr = posArr.map((ele) => {return {...ele, vx: ele.vx*factor, vy: ele.vy*factor}});
+    posArr = (posArr.map((ele) => {return {...ele, vx: ele.vx*factor, vy: ele.vy*factor}}));
   }
 
   const isValidColor = (strColor) => {
@@ -529,6 +542,27 @@ function App() {
     }
     */
   }
+  
+  const getUnitList = (unit) => {
+    let curU = unit;
+
+    let uList = []
+
+    while (!(curU == null)) {
+      uList.push(curU);
+      curU = posArr[curU.next];
+    }
+
+    return uList;
+  }
+
+  const DisplayG = ({stations}) => (
+  <>
+    {stations.map((station, ind) => (
+      <span className="station" key={ind}>{station.x + " |"}</span>
+    ))}
+  </>
+  );
 
   const updateDraw = (frameCount, timeRate) => {
   
@@ -550,8 +584,14 @@ function App() {
 
     posArr = ug.updateDraw(timeRate);
 
+    console.log("IN App updateDraw, ug.cells=", ug.cells);
+    console.log("posArr=", posArr);
+
     //handleCollisions(posArr);
     //ug.handleCollisions();
+
+      //testV.current = {a1: posArr[0].y, a2: testV.current.a2};
+    
   }
 
   const updateFrame = () => {
@@ -567,14 +607,37 @@ function App() {
 
   ug.printGrid();
   
+  //this.setState({test: '123'})
   }
 
   setup();
   
+  /*
 
+      cells.map((row) =>
+    <>
+    {row.map((ele) => 
+    (getUnitList(posArr[ele]).map((unit) => <span>{"id=" + unit.id + " x=" + unit.x + " y=" + unit.y + " |"}</span>))
+    )}
+    <br />
+  
+    </>
+    )
+
+    [[0,3],[2,1]][0]
+
+    ug.cells[0].map((ele, ind) => (<span key={ind}>{posArr[ele].x+" |"}</span>))
+  
+      <DisplayG stations={posArr} />
+      
+    */
   return (
     <div className="App">
       <Canvas draw={draw} updateDraw={updateDraw} clickAction={updateFrame} width={CVS_WIDTH} height={CVS_HEIGHT}/>
+      
+      {/*
+      <DisplayGrid cells={ug.getCells()}/>
+      */}
     </div>
   );
 }

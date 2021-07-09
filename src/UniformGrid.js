@@ -11,7 +11,7 @@ export default class UniformGrid {
         this.initializeCells(posArr);
         this.done = false;
         this.testFc = 0;
-        this.maxFc = 10000;
+        this.maxFc = 15;
         //this.maxFc = 870;
         //this.maxFc = 28;
         //this.maxFc = 32;
@@ -40,9 +40,13 @@ export default class UniformGrid {
             */
         }
 
-        console.log("done=", this.done);
+        //console.log("done=", this.done);
     }
 
+    getCells() {
+        return this.cells;
+    }
+    
     makeArray(d1, d2) {
         var arr = [];
         for(let i = 0; i < d1; i++) {
@@ -244,6 +248,7 @@ export default class UniformGrid {
         */
 
         this.testFc++;
+        console.log("IN UniformGrid updateDraw this.cells=", this.cells);
         console.log("this.posArr=", this.posArr);
         return this.posArr;
     }
