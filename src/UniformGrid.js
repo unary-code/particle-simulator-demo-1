@@ -1,14 +1,21 @@
-import React from 'react'
+import React, {Component} from 'react'
 import Unit from './Unit'
 import {calcMag, dotProduct, scaleBy, addVector, linearInterpolate, isCollisionWithWall, linearInterpolateWithWall, handleCollisionWithWall} from './App'
 
-export default class UniformGrid {
-    constructor(posArr, CVS_WIDTH, CVS_HEIGHT, NUM_CELLS) {
-        this.NUM_CELLS = NUM_CELLS;
+class UniformGrid extends Component {
+    
+    //constructor(posArr, CVS_WIDTH, CVS_HEIGHT, NUM_CELLS) {
+
+    constructor(props) {
+        super(props)
+
+        console.log("props.posArr=", this.props.posArr);
+
+        this.NUM_CELLS = this.props.NUM_CELLS;
         this.cells = this.makeArray(this.NUM_CELLS, this.NUM_CELLS);
-        this.posArr = posArr;
-        this.CVS_DIMENSIONS = [CVS_HEIGHT, CVS_WIDTH]
-        this.initializeCells(posArr);
+        this.posArr = this.props.posArr;
+        this.CVS_DIMENSIONS = [this.props.CVS_HEIGHT, this.props.CVS_WIDTH]
+        this.initializeCells(this.props.posArr);
         this.done = false;
         this.testFc = 0;
         this.maxFc = 15;
@@ -17,6 +24,10 @@ export default class UniformGrid {
         //this.maxFc = 32;
         
         this.nRUC = 0;
+
+        this.state = {
+            count: 1
+        }
     }
 
     //Initialize the cells array with points from posArrTest
@@ -471,4 +482,13 @@ export default class UniformGrid {
         }
     }
 
+    render() {
+        return (
+            <div>
+                UNIFORMGRID RENDERS THIS DIV.
+            </div>
+        )
+    }
 }
+
+export default UniformGrid

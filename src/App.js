@@ -1,7 +1,7 @@
 import './App.css';
 import Canvas from './Canvas.js'
 import {useState, useRef} from 'react'
-import UniformGrid from './UniformGrid.js'
+//import UniformGrid from './UniformGrid.js'
 import DisplayGrid from './DisplayGrid.js'
 
 export const CVS_WIDTH = 700;
@@ -582,9 +582,9 @@ let posArr = [
 
     // setPosArr(posArrCopy);
 
-    posArr = ug.updateDraw(timeRate);
+    //posArr = ug.updateDraw(timeRate);
 
-    console.log("IN App updateDraw, ug.cells=", ug.cells);
+    //console.log("IN App updateDraw, ug.cells=", ug.cells);
     console.log("posArr=", posArr);
 
     //handleCollisions(posArr);
@@ -603,9 +603,9 @@ let posArr = [
   generatePos(0);
   speedUp(20);
   console.log("after generatePos, posArr=", posArr);
-  ug = new UniformGrid(posArr, CVS_WIDTH, CVS_HEIGHT, NUM_CELLS);
+  //ug = new UniformGrid(posArr, CVS_WIDTH, CVS_HEIGHT, NUM_CELLS);
 
-  ug.printGrid();
+  //ug.printGrid();
   
   //this.setState({test: '123'})
   }
@@ -633,8 +633,10 @@ let posArr = [
     */
   return (
     <div className="App">
-      <Canvas draw={draw} updateDraw={updateDraw} clickAction={updateFrame} width={CVS_WIDTH} height={CVS_HEIGHT}/>
-      
+      <Canvas draw={draw} updateDraw={updateDraw} clickAction={updateFrame} width={CVS_WIDTH} height={CVS_HEIGHT} posArr={posArr} CVS_WIDTH={CVS_WIDTH} CVS_HEIGHT={CVS_HEIGHT} NUM_CELLS={NUM_CELLS}/>
+      {/*
+      <UniformGrid posArr={posArr} CVS_WIDTH={CVS_WIDTH} CVS_HEIGHT={CVS_HEIGHT} NUM_CELLS={NUM_CELLS} />
+      */}
       {/*
       <DisplayGrid cells={ug.getCells()}/>
       */}
