@@ -1,7 +1,7 @@
 import './App.css';
 import Canvas from './Canvas.js'
-import {useState, useRef} from 'react'
-//import UniformGrid from './UniformGrid.js'
+import React, {useState, useRef} from 'react'
+import UniformGrid from './UniformGrid.js'
 import DisplayGrid from './DisplayGrid.js'
 
 export const CVS_WIDTH = 700;
@@ -252,9 +252,11 @@ export const isCollisionWithWall = (pos1) => {
 
 function App() {
 
+  const uniformGridRef = React.createRef()
+
   const BALL_RADIUS = 40;
 
-  const NUM_CELLS = 2;
+  const NUM_CELLS = 4;
 
   let ug;
 
@@ -277,7 +279,7 @@ function App() {
   ]
   */
 
-  /*
+  
   let posArr = [
     {x: 600, y:80, color: 'radfasdfadsf', vx: 0, vy: 0.1, radius: 10, mass: 10, done: false, id: 1},
     {       color: "#ff00ff", id: 2, mass: 10, radius: 10, vx: 0.025, vy: -0.025, x: 79, y: 116     },
@@ -288,16 +290,17 @@ function App() {
     {       color: "#ff00ff", id: 7, mass: 10, radius: 30, vx: -0.2, vy: 0.05, x: 40, y: 250     }
 
   ]
-*/
 
+
+/*
 let posArr = [
   {x: 600, y:80, color: 'radfasdfadsf', vx: 0, vy: 0.1, radius: 10, mass: 10, done: false, id: 1},
   {       color: "#ff00ff", id: 2, mass: 10, radius: 10, vx: 0, vy: 0, x: 600, y: 538     },
-  {       color: "#ff00ff", id: 3, mass: 10, radius: 30, vx: -0.1, vy: -0.2, x: 100, y: 385     },
+  {       color: "#ff00ff", id: 3, mass: 10, radius: 30, vx: -0.1, vy: -0.2, x: 100, y: 585     },
   {       color: "#ff00ff", id: 4, mass: 10, radius: 30, vx: -0.2, vy: 0.05, x: 40, y: 35     }
 
 ]
-
+*/
 
   /*
   let posArr = [
@@ -585,7 +588,14 @@ let posArr = [
     //posArr = ug.updateDraw(timeRate);
 
     //console.log("IN App updateDraw, ug.cells=", ug.cells);
-    console.log("posArr=", posArr);
+    //console.log("posArr=", posArr);
+
+    uniformGridRef.current.updateDraw(timeRate);
+
+    //uniformGridRef.current.incrementVar();
+    //console.log("uniformGridRef.current.state = ", uniformGridRef.current.state);
+
+    //this.refs.uniformgrid.incrementVar();
 
     //handleCollisions(posArr);
     //ug.handleCollisions();
@@ -634,9 +644,9 @@ let posArr = [
   return (
     <div className="App">
       <Canvas draw={draw} updateDraw={updateDraw} clickAction={updateFrame} width={CVS_WIDTH} height={CVS_HEIGHT} posArr={posArr} CVS_WIDTH={CVS_WIDTH} CVS_HEIGHT={CVS_HEIGHT} NUM_CELLS={NUM_CELLS}/>
-      {/*
-      <UniformGrid posArr={posArr} CVS_WIDTH={CVS_WIDTH} CVS_HEIGHT={CVS_HEIGHT} NUM_CELLS={NUM_CELLS} />
-      */}
+      
+      <UniformGrid ref={uniformGridRef} posArr={posArr} CVS_WIDTH={CVS_WIDTH} CVS_HEIGHT={CVS_HEIGHT} NUM_CELLS={NUM_CELLS} />
+      
       {/*
       <DisplayGrid cells={ug.getCells()}/>
       */}

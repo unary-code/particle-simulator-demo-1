@@ -18,7 +18,7 @@ class UniformGrid extends Component {
         this.initializeCells(this.props.posArr);
         this.done = false;
         this.testFc = 0;
-        this.maxFc = 15;
+        this.maxFc = 500;
         //this.maxFc = 870;
         //this.maxFc = 28;
         //this.maxFc = 32;
@@ -26,8 +26,13 @@ class UniformGrid extends Component {
         this.nRUC = 0;
 
         this.state = {
-            count: 1
+            count: 1,
+            var1: 12,
+            posArr: this.posArr,
+            cells: this.cells,
+            saves: []
         }
+
     }
 
     //Initialize the cells array with points from posArrTest
@@ -259,8 +264,17 @@ class UniformGrid extends Component {
         */
 
         this.testFc++;
+        
+        this.setState({
+            ...this.state,
+            posArr: this.posArr,
+            cells: this.cells
+        })
+
         console.log("IN UniformGrid updateDraw this.cells=", this.cells);
         console.log("this.posArr=", this.posArr);
+
+        
         return this.posArr;
     }
 
@@ -482,10 +496,94 @@ class UniformGrid extends Component {
         }
     }
 
+    printGridCustom(cells, posArr) {
+        console.log("PRINTGRID()");
+        for (let i=0; i<cells.length; i++) {
+            for (let j=0; j<cells[i].length; j++) {
+                if (cells[i][j] == null) continue;
+                let curEle = posArr[cells[i][j]];
+                const curType = typeof(curEle);
+                console.log("cells[" + i + "][" + j + "] = ");
+                if (curType === 'number') {
+                    console.log(curEle);
+                } else {
+                    while (true) {
+                    console.log(JSON.parse(JSON.stringify(curEle)));
+                    if (curEle.next == null) break;
+                    if (curEle.posInd == curEle.next) break;
+                    curEle = posArr[curEle.next];
+                    }
+                }
+            }
+        }
+    }
+
+    incrementVar() {
+        console.log("incrementVar() run");
+        this.setState({
+            count: this.state.count,
+            var1: this.state.var1+1
+        })
+
+    }
+
+    getUnitList(unit) {
+        let curU = unit;
+    
+        let uList = []
+    
+        while (!(curU == null)) {
+          uList.push(curU);
+          curU = this.state.posArr[curU.next];
+        }
+    
+        return uList;
+      }
+    
+      getDisplay() {
+          console.log("getDisplay() run cells=", this.state.cells);
+        return this.state.cells.map((row, rowInd) =>
+        <>
+        <span>{"ROW IND=" + rowInd + " |||"}</span>
+        {row.map((ele, colInd) => 
+        (<span>{"COL IND=" + colInd} {this.getUnitList(this.state.posArr[ele]).map((unit) => <span>{"id=" + unit.id + " x=" + Math.floor(unit.x) + " y=" + Math.floor(unit.y) + " |"}</span>)}</span>))
+        }
+        <br />
+      
+        </>
+        )
+      }
+
+      saveState() {
+
+        let newSaves = Array.from(this.state.saves);
+        newSaves.push({posArr: this.state.posArr, cells: this.state.cells, frameCount: this.testFc})
+        this.setState({
+            ...this.state,
+            saves: newSaves
+        })
+      }
+
+      printSavedStates() {
+        
+        this.state.saves.forEach((ele, ind) => {
+            console.log("SAVED INDEX=" + ind + " FRAMECOUNT AT THE TIME OF THIS SAVE=" + ele.frameCount);
+            console.log("posArr on this save=", ele.posArr);
+            this.printGridCustom(ele.cells, ele.posArr);
+        })
+      }
+
     render() {
         return (
             <div>
-                UNIFORMGRID RENDERS THIS DIV.
+                UNIFORMGRID RENDERS THIS DIV. this.frameCount = {this.testFc}
+                <br />
+                {this.getDisplay()}
+                
+                <button onClick={() => {this.saveState()}}>CLICK TO SAVE A COPY OF THE STATE AT THIS TIME (INCLUDES CELLS AND POSARR)</button>
+                
+                <button onClick={() => {this.printSavedStates()}}>CLICK TO CONSOLE LOG SAVED STATES</button>
+                
             </div>
         )
     }
