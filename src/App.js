@@ -1,5 +1,6 @@
 import './App.css';
 import Canvas from './Canvas.js'
+import CanvasNew from './CanvasNew.js'
 import React, {useState, useRef} from 'react'
 import UniformGrid from './UniformGrid.js'
 import DisplayGrid from './DisplayGrid.js'
@@ -252,7 +253,12 @@ export const isCollisionWithWall = (pos1) => {
 
 function App() {
 
-  const uniformGridRef = React.createRef()
+  //const [isPaused, setIsPaused] = useState(false);
+
+  const canvasRef = useRef(null)
+  const uniformGridRef = useRef(null)
+
+  let isRunOut = false;
 
   const BALL_RADIUS = 40;
 
@@ -609,7 +615,24 @@ let posArr = [
     updateDraw();
   }
 
+
+
+  const updateRunOut = (isRunOutNew) => {
+    console.log("IN APP.JS, updateRunOut RUN");
+
+    console.log("uniformGridRef.current=", uniformGridRef.current);
+    console.log("canvasRef.current=", canvasRef.current);
+
+    //setIsPaused(isPausedNew);
+
+    //canvasRef.current.updateRunOut(isRunOutNew);
+
+    isRunOut = isRunOutNew;
+    console.log("IN APP.JS, isRunOut=", isRunOut);
+  }
+
   const setup = () => {
+
   generatePos(0);
   speedUp(20);
   console.log("after generatePos, posArr=", posArr);
@@ -643,9 +666,22 @@ let posArr = [
     */
   return (
     <div className="App">
-      <Canvas draw={draw} updateDraw={updateDraw} clickAction={updateFrame} width={CVS_WIDTH} height={CVS_HEIGHT} posArr={posArr} CVS_WIDTH={CVS_WIDTH} CVS_HEIGHT={CVS_HEIGHT} NUM_CELLS={NUM_CELLS}/>
+      {/*
+      <CanvasNew ref={canvasRef} clickMe={() => {console.log(canvasRef)}}
+      isRunOut={isRunOut}
+      draw={draw} updateDraw={updateDraw} clickAction={updateFrame} width={CVS_WIDTH} height={CVS_HEIGHT} posArr={posArr} CVS_WIDTH={CVS_WIDTH} CVS_HEIGHT={CVS_HEIGHT} NUM_CELLS={NUM_CELLS}
+      />
+      */}
       
-      <UniformGrid ref={uniformGridRef} posArr={posArr} CVS_WIDTH={CVS_WIDTH} CVS_HEIGHT={CVS_HEIGHT} NUM_CELLS={NUM_CELLS} />
+      <Canvas
+      ref={canvasRef}
+      //key={isRunOut}
+      isRunOut={isRunOut}
+      draw={draw} updateDraw={updateDraw} clickAction={updateFrame} width={CVS_WIDTH} height={CVS_HEIGHT} posArr={posArr} CVS_WIDTH={CVS_WIDTH} CVS_HEIGHT={CVS_HEIGHT} NUM_CELLS={NUM_CELLS}
+      //isPaused={isPaused}
+      />
+      
+      <UniformGrid ref={uniformGridRef} posArr={posArr} CVS_WIDTH={CVS_WIDTH} CVS_HEIGHT={CVS_HEIGHT} NUM_CELLS={NUM_CELLS} updateRunOut={updateRunOut}/>
       
       {/*
       <DisplayGrid cells={ug.getCells()}/>

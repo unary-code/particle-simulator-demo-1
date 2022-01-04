@@ -9,7 +9,10 @@ const useCanvas = (props) => {
 
     //const [clickMode, setClickMode] = useState(false);
     let clickMode = useRef(false);
-    const [restart, setRestart] = useState(false);
+
+    // RESTART IS USED AS A DEPENDENCY FOR THE USEEFFECT THAT CALLS THE RENDER FUNCTION
+    // THAT WILL (IF !CLICKMODE.CURRENT) KEEP ANIMATING AND UPDATING THE CANVAS
+    const [restartTrigger, setRestartTrigger] = useState(false);
 
     let frameCount = 0
     
@@ -21,22 +24,23 @@ const useCanvas = (props) => {
       //setClickMode(!clickMode, () => { console.log("clickMode after=", clickMode);});
       clickMode.current = !clickMode.current;
       console.log("clickMode after=", clickMode.current);
+      props.updatePause(clickMode.current);
       if (!clickMode.current) {
         console.log("restart is changed thru setRestart");
-        setRestart(!restart);
+        setRestartTrigger(!restartTrigger);
       }
     }
 
     useEffect(() => {
       console.log("clickMode after in useEffect=", clickMode);
-      console.log("restart before in useEffect= ", restart);
+      console.log("restartTrigger before in useEffect= ", restartTrigger);
       /*
       if (!clickMode.current) {
         console.log("restart is changed thru setRestart");
         setRestart(!restart);
       }
       */
-      console.log("restart after = ", restart);
+      console.log("restartTrigger after = ", restartTrigger);
     }, [clickMode.current]);
 
     /*
@@ -97,7 +101,7 @@ const useCanvas = (props) => {
     return () => {
       window.cancelAnimationFrame(animationFrameId)
     }
-  }, [draw, updateDraw, restart])
+  }, [draw, updateDraw, restartTrigger])
   
 
   /*

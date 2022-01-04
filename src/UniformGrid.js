@@ -19,6 +19,7 @@ class UniformGrid extends Component {
         this.done = false;
         this.testFc = 0;
         this.maxFc = 500;
+        //this.maxFc = 500;
         //this.maxFc = 870;
         //this.maxFc = 28;
         //this.maxFc = 32;
@@ -187,11 +188,14 @@ class UniformGrid extends Component {
     updateDraw(timeRate) {
 
         if (this.testFc > this.maxFc) {
-            console.log("updateDraw() returned since this.testFc was > than " + this.maxFc);
+            console.log("updateDraw() returned because this.testFc was > than " + this.maxFc);
             if (this.testFc < this.maxFc + 2) {
                 this.printGrid();
+                this.props.updateRunOut(true);
             }
             this.testFc++;
+
+
             return this.posArr;
         }
 
@@ -576,10 +580,11 @@ class UniformGrid extends Component {
     render() {
         return (
             <div>
+                {/*
                 UNIFORMGRID RENDERS THIS DIV. this.frameCount = {this.testFc}
                 <br />
                 {this.getDisplay()}
-                
+                */}
                 <button onClick={() => {this.saveState()}}>CLICK TO SAVE A COPY OF THE STATE AT THIS TIME (INCLUDES CELLS AND POSARR)</button>
                 
                 <button onClick={() => {this.printSavedStates()}}>CLICK TO CONSOLE LOG SAVED STATES</button>
